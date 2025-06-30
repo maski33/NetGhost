@@ -4,6 +4,10 @@ import os
 from datetime import datetime
 
 def save_report(target, analysis_results):
+    # Création du dossier outputs s'il n'existe pas
+    if not os.path.exists('outputs'):
+        os.makedirs('outputs')
+
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     safe_target = target.replace(":", "_").replace("/", "_")
     filename = f"outputs/report_{safe_target}_{timestamp}.txt"
@@ -16,7 +20,7 @@ def save_report(target, analysis_results):
 
         # DNS
         f.write("[+] Analyse DNS\n")
-        dns = analysis_results['dns']
+        dns = analysis_results.get('dns', {})
         f.write(f"- Whois: {dns.get('whois')}\n")
         f.write(f"- Sous-domaines trouvés : {', '.join(dns.get('subdomains_found', [])) or 'Aucun'}\n")
         f.write("- Zone transfer :\n")
@@ -25,7 +29,7 @@ def save_report(target, analysis_results):
 
         # WebTech
         f.write("\n[+] Technologies Web\n")
-        web = analysis_results['web']
+        web = analysis_results.get('web', {})
         if web:
             f.write(f"- CMS : {', '.join(web.get('cms', [])) or 'Non détecté'}\n")
             f.write(f"- Frameworks : {', '.join(web.get('frameworks', [])) or 'Non détecté'}\n")
@@ -46,5 +50,15 @@ def save_report(target, analysis_results):
                 f.write(f"- {line}\n")
         else:
             f.write("Aucune anomalie détectée.\n")
+
+
+        dirb_pages = analysis_results.get('dirb_found_pages', [])
+        f.write("\n[+] Pages web découvertes dirb\n")
+        if dirb_pages:
+            for url, code in dirb_pages:
+                f.write(f"- {url} (HTTP {code})\n")
+        else:
+            f.write("Aucune page trouvée.\n")
+
 
     print(f"\nRapport sauvegardé dans : {filename}")

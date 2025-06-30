@@ -1,3 +1,4 @@
 dnspython
 requests
 beautifulsoup4
+python-whois

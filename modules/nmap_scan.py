@@ -6,7 +6,7 @@ def run(target, scan_args):
     try:
         print(f"Lancement de Nmap sur {target} avec options : {' '.join(scan_args)}")
         cmd = ["nmap", "-Pn"] + scan_args + [target]
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=240)
         output = result.stdout
 
         os.makedirs("outputs", exist_ok=True)
